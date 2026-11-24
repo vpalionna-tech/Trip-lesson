@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ultimate Weekend Trip: розмовний квест (120 хв, A2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F3F5FB; --surface:#FFFFFF; --ink:#16192E; --muted:#58607F; --line:#D3D9EE; --soft:#E8ECF9;
+  --acc:#2F5BFF; --onacc:#FFFFFF; --gold:#FFC83D; --ok:#1E8A55; --oksoft:#D8F4E5; --warn:#FFEBB5; --bad:#FFE0DC; --focus:#0A5CFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#0E1220; --surface:#171C30; --ink:#EEF1FF; --muted:#AEB6D8; --line:#2F3860; --soft:#212845; --acc:#7C9BFF; --onacc:#0E1220; --gold:#FFC83D; --ok:#6FE0A0; --oksoft:#17402E; --warn:#4A3D12; --bad:#4D2420; --focus:#9CC1FF; }
+}
+:root[data-theme="dark"]{ --bg:#0E1220; --surface:#171C30; --ink:#EEF1FF; --muted:#AEB6D8; --line:#2F3860; --soft:#212845; --acc:#7C9BFF; --onacc:#0E1220; --gold:#FFC83D; --ok:#6FE0A0; --oksoft:#17402E; --warn:#4A3D12; --bad:#4D2420; --focus:#9CC1FF; }
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Manrope','Segoe UI',system-ui,-apple-system,Roboto,sans-serif;font-size:17px;line-height:1.55}
+button,input,textarea{font-family:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+
+.top{background:var(--surface);border-bottom:2px solid var(--line)}
+.top-in{max-width:1000px;margin:0 auto;padding:12px 14px 10px}
+.r1{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.top h1{margin:0;font-size:clamp(19px,4.4vw,27px);font-weight:800;line-height:1.15}
+.top h1 em{font-style:normal;background:var(--gold);color:#16192E;border-radius:8px;padding:0 8px}
+.timer{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.clock{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;min-width:100px;text-align:center;border:2px solid var(--line);border-radius:12px;padding:0 10px;background:var(--soft)}
+.clock.off{opacity:.4}
+.tb{cursor:pointer;font-weight:700;font-size:14px;border:2px solid var(--line);border-radius:10px;padding:6px 10px;background:var(--surface);color:var(--ink)}
+.tb.main{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
+.stages{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.sg{cursor:pointer;text-align:left;border:2px solid var(--line);border-radius:12px;padding:6px 8px;background:var(--surface);font-weight:700;font-size:12.5px;line-height:1.2;display:flex;flex-direction:column;gap:1px}
+.sg small{font-weight:600;color:var(--muted);font-size:11.5px}
+.sg[aria-current="true"]{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
+.sg[aria-current="true"] small{color:var(--onacc);opacity:.9}
+.sg.done{border-color:var(--ok);background:var(--oksoft)}
+.sg.done[aria-current="true"]{background:var(--acc);border-color:var(--acc)}
+.xp{display:flex;align-items:center;gap:10px;margin-top:10px}
+.xpbar{flex:1;height:10px;border-radius:999px;background:var(--soft);overflow:hidden}
+.xpbar>i{display:block;height:100%;background:var(--gold);transition:width .3s}
+.xpn{font-weight:800;font-size:14px;white-space:nowrap}
+.main{max-width:1000px;margin:0 auto;padding:16px 14px 110px}
+
+.card{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:18px 16px}
+h2{font-size:24px;margin:0 0 4px;font-weight:800}
+h3{font-size:16px;margin:16px 0 6px;font-weight:800}
+.muted{color:var(--muted);font-size:15px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.between{justify-content:space-between}
+.btn{cursor:pointer;font-weight:700;font-size:16px;border:2px solid var(--line);border-radius:12px;padding:9px 16px;background:var(--surface);color:var(--ink)}
+.btn.main{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
+.btn.gold{background:var(--gold);color:#16192E;border-color:#16192E}
+.btn.good{background:var(--oksoft);border-color:var(--ok)}
+.btn:active{transform:translateY(2px)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.tip{border-left:6px solid var(--acc);background:var(--soft);border-radius:8px;padding:8px 12px;margin:10px 0}
+.warn{border-left:6px solid #E8B000;background:var(--warn);border-radius:8px;padding:8px 12px;margin:10px 0}
+.okb{border-left:6px solid var(--ok);background:var(--oksoft);border-radius:8px;padding:8px 12px;margin:10px 0}
+.twist{border:3px dashed #E8B000;background:var(--warn);border-radius:12px;padding:10px 12px;margin:10px 0;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.chip{cursor:pointer;font-weight:700;font-size:15px;border:2px solid var(--acc);border-radius:999px;padding:3px 14px;background:var(--surface);color:var(--ink)}
+.chip.sel{background:var(--acc);color:var(--onacc)}
+.chip.plain{border-color:var(--line);cursor:default}
+.tag{display:inline-block;font-weight:800;font-size:12px;border-radius:999px;padding:1px 10px;background:var(--gold);color:#16192E;margin-right:6px}
+.big{font-size:clamp(20px,4.6vw,28px);font-weight:800;line-height:1.3;margin:8px 0}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}
+.opt{cursor:pointer;text-align:center;font-weight:800;font-size:18px;border:2px solid var(--line);border-radius:14px;padding:14px 8px;background:var(--surface);color:var(--ink);line-height:1.25}
+.opt.pick{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
+.opt.good{background:var(--oksoft);border-color:var(--ok)}
+.opt.soft{background:var(--warn);border-color:#E8B000}
+.opt[disabled]{cursor:default}
+.list1{display:grid;gap:8px}
+.list1 .opt{text-align:left;font-size:16.5px;font-weight:700;padding:10px 14px}
+.dots{display:flex;gap:6px;margin:0 0 8px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--line);background:var(--surface)}
+.dot.on{background:var(--acc);border-color:var(--acc)}
+.dot.done{background:var(--ok);border-color:var(--ok)}
+.vibes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.timerbox{margin:10px 0 4px}
+.tnum{font-size:36px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.tbar{height:10px;border:2px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface);margin-top:6px}
+.tbar>i{display:block;height:100%;background:var(--acc);width:100%}
+.tmsg{margin:4px 0 0;color:var(--muted);font-size:14px}
+
+/* reading */
+.page{border:2px solid var(--line);border-radius:16px;background:var(--bg);padding:12px 14px;margin:10px 0}
+.page .hd{display:flex;align-items:center;gap:10px;font-weight:800;margin-bottom:6px}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--acc);color:var(--onacc);font-weight:800}
+.page p{margin:6px 0;font-size:17.5px}
+.hl{cursor:pointer;font-weight:800;border:0;border-bottom:3px solid var(--gold);background:transparent;padding:0 1px;font-size:inherit;color:inherit}
+.hl:hover{background:var(--soft)}
+.tipbox{position:sticky;bottom:10px;border:3px solid var(--acc);border-radius:16px;background:var(--surface);padding:10px 14px;margin:10px 0;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:5}
+.tipbox .w{font-size:22px;font-weight:800}
+.mt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mt .col{display:grid;gap:8px}
+.mt .opt{text-align:left;font-size:16px;font-weight:700;padding:9px 12px}
+.mt .opt.sel{background:var(--acc);color:var(--onacc)}
+.mt .opt.done{background:var(--oksoft);border-color:var(--ok)}
+
+/* budget */
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:10px 0}
+.item{cursor:pointer;text-align:left;border:2px solid var(--line);border-radius:14px;padding:10px;background:var(--surface);display:flex;flex-direction:column;gap:2px;line-height:1.25}
+.item .em{font-size:30px;line-height:1}
+.item b{font-size:15px}
+.item .u{color:var(--muted);font-size:13px}
+.item .p{font-weight:800}
+.item .rec{font-size:12px;font-weight:800;color:#8A5B00}
+.item[aria-pressed="true"]{background:var(--oksoft);border-color:var(--ok)}
+.meter{height:20px;border:2px solid var(--line);border-radius:999px;background:var(--surface);overflow:hidden;margin:6px 0}
+.meter>i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.meter.warn>i{background:#E8B000}
+.lay{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.cart{border:2px solid var(--line);border-radius:14px;padding:12px;background:var(--bg)}
+.just{border:2px solid var(--line);border-radius:12px;padding:8px 10px;margin:8px 0;background:var(--surface)}
+.just.ok{background:var(--oksoft);border-color:var(--ok)}
+
+/* roleplay */
+.chars{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.char{border:2px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface)}
+.char b{display:block}
+.step{border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin:10px 0;background:var(--surface)}
+.step .t{display:flex;gap:10px;align-items:flex-start}
+.step .t b{color:var(--acc);min-width:64px}
+.hnt{margin-top:8px;padding:8px 12px;border-left:6px solid var(--acc);background:var(--soft);border-radius:8px;font-size:15.5px}
+.hnt div{margin:2px 0}
+
+/* compare */
+.tabsb{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dest{border:2px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}
+.dest.fav{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold)}
+.dest .h{padding:8px 12px;font-weight:800;background:var(--soft);border-bottom:2px solid var(--line)}
+.dest .b{padding:10px 12px}
+.w3{display:grid;gap:8px;margin:8px 0}
+.w3 .r{display:flex;align-items:center;justify-content:space-between;gap:8px;border:2px solid var(--line);border-radius:12px;padding:6px 10px;background:var(--surface)}
+.star{cursor:pointer;font-size:24px;border:0;background:transparent;padding:0 2px;filter:grayscale(1);opacity:.5}
+.star.on{filter:none;opacity:1}
+.sc{display:grid;grid-template-columns:130px 1fr 40px;gap:8px;align-items:center;margin:6px 0}
+.sc .b{height:14px;background:var(--soft);border-radius:999px;overflow:hidden}
+.sc .b>i{display:block;height:100%;background:var(--acc)}
+
+/* wrap */
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.kpi div{border:2px solid var(--line);border-radius:14px;padding:8px;text-align:center;background:var(--surface)}
+.kpi .n{font-size:30px;font-weight:800;line-height:1}
+.kpi small{display:block;color:var(--muted);font-size:12.5px;font-weight:600}
+.bdg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.bd{border:2px solid var(--line);border-radius:12px;padding:8px;text-align:center;background:var(--surface);font-size:13px}
+.bd .e{font-size:28px;display:block;filter:grayscale(1);opacity:.4}
+.bd.on{background:var(--gold);color:#16192E}
+.bd.on .e{filter:none;opacity:1}
+.wds{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.wds label{display:flex;gap:6px;align-items:center;border:2px solid var(--line);border-radius:10px;padding:4px 8px;background:var(--surface);font-size:14.5px;cursor:pointer}
+.wds label.on{background:var(--oksoft);border-color:var(--ok)}
+.wds input{width:17px;height:17px}
+.ta{width:100%;min-height:70px;border:2px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface);font-size:16px;margin:4px 0}
+.sum{white-space:pre-wrap;background:var(--bg);border:2px dashed var(--line);border-radius:12px;padding:12px;font-size:15px}
+
+/* rescue */
+.sos{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;cursor:pointer;font-weight:800;font-size:16px;border:3px solid var(--gold);border-radius:999px;padding:10px 18px;background:var(--warn);color:var(--ink);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(430px,100%);z-index:40;background:var(--surface);border-left:3px solid var(--line);padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));overflow:auto;transform:translateX(105%);transition:transform .25s}
+.drawer.open{transform:none}
+.veil{position:fixed;inset:0;background:rgba(5,8,20,.5);z-index:35;display:none}
+.veil.open{display:block}
+.ph{border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin:10px 0;background:var(--bg)}
+.ph .e{font-weight:800;font-size:18px}
+.toast{position:fixed;left:50%;bottom:calc(74px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 18px;font-weight:700;font-size:15px;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+
+@media (max-width:820px){
+  body{font-size:16.5px}
+  .stages{grid-template-columns:repeat(7,1fr)}
+  .sg small{display:none}
+  .sg{padding:6px 4px;font-size:11px;text-align:center;align-items:center}
+  .lay{grid-template-columns:1fr}
+  .cmp{grid-template-columns:1fr}
+  .chars,.mt{grid-template-columns:1fr}
+  .vibes{grid-template-columns:1fr}
+  .bdg{grid-template-columns:repeat(2,1fr)}
+  .wds{grid-template-columns:1fr 1fr}
+  .sc{grid-template-columns:90px 1fr 34px}
+}
+@media (prefers-reduced-motion: reduce){ .btn:active{transform:none} .xpbar>i,.meter>i,.toast,.drawer{transition:none} }
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="r1">
+    <h1>✈️ Ultimate <em>Weekend Trip</em></h1>
+    <div class="timer" aria-label="Таймер уроку">
+      <span class="clock" id="clock" role="timer">120:00</span>
+      <button class="tb main" id="tpause">▶ Старт</button>
+      <button class="tb" id="tplus">+5 хв</button>
+      <button class="tb" id="ttog">👁 Сховати</button>
+      <button class="tb" id="tth" aria-label="Тема">🌓</button>
+    </div>
+  </div>
+  <nav class="stages" id="stages" aria-label="Етапи уроку"></nav>
+  <div class="xp"><div class="xpbar" aria-hidden="true"><i id="xpi" style="width:0%"></i></div><span class="xpn" id="xpn">0 XP</span></div>
+</div></header>
+<main class="main" id="view"></main>
+<button class="sos" id="sosBtn" aria-haspopup="dialog">🆘 Фрази порятунку</button>
+<div class="veil" id="veil"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-label="Фрази порятунку" aria-hidden="true"></aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+var $=function(s){ return document.querySelector(s); };
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+var canSpeak=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
+function say(t){ if(!canSpeak){ toast('Озвучка недоступна у цьому браузері. Прочитайте вголос самостійно.'); return; } try{ window.speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=0.88; window.speechSynthesis.speak(u);}catch(e){ toast('Озвучка не спрацювала. Прочитайте вголос.'); } }
+var toastT=null; function toast(m){ var t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){ t.classList.remove('show'); },2400); }
+function copyText(txt,msg){ try{ navigator.clipboard.writeText(txt).then(function(){ toast(msg||'Скопійовано ✓'); },function(){ fb(txt,msg); }); }catch(e){ fb(txt,msg); } }
+function fb(txt,msg){ var ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast(msg||'Скопійовано ✓'); }catch(e){ toast('Виділіть текст і скопіюйте вручну.'); } document.body.removeChild(ta); }
+function bindA(attr,fn){ var c=document.querySelectorAll('['+attr+']'); for(var i=0;i<c.length;i++) c[i].onclick=function(){ fn(this.getAttribute(attr)); }; }
+function chipsH(list,attr){ return '<div class="chips">'+list.map(function(x,i){ return '<button class="chip" '+attr+'="'+i+'">'+esc(x)+'</button>'; }).join('')+'</div>'; }
+function bindChips(attr,list){ var c=document.querySelectorAll('['+attr+']'); for(var i=0;i<c.length;i++) c[i].onclick=function(){ var t=list[parseInt(this.getAttribute(attr),10)]; this.classList.toggle('sel'); copyText(t,'Скопійовано: «'+t+'»'); say(t.replace(/\.\.\./g,'')); }; }
+function mkH(s){ return s.split(/(\[\[\w+\|[^\]]+\]\])/).map(function(p){ var m=p.match(/^\[\[(\w+)\|([^\]]+)\]\]$/); return m?'<button class="hl" data-gl="'+m[1]+'">'+esc(m[2])+'</button>':esc(p); }).join(''); }
+
+/* ---------- state ---------- */
+var S={stage:0,done:[0,0,0,0,0,0,0],xp:{},vibe:'',
+ s1:{mode:'tt',i:0,ch:{},tt:{},tr:{},rc:{}},
+ s2:{tab:0,tip:null,match:{},quiz:{},quizDone:false,mDone:false},
+ s3:{cart:{},just:{},fin:false},
+ s4:{mode:'taboo',tab:{},tn:0,mys:{clues:1,solved:{},oi:0}},
+ s5:{sc:0,lvl:'easy',done:{},twists:0,path:{},ts:{}},
+ s6:{tab:0,w:{},fav:'',ctr:{},fin:false},
+ s7:{words:{},ref:['','',''],done:false}};
+var KEY='weekendtrip.quest.v1';
+try{ var sv=window.localStorage.getItem(KEY); if(sv){ var o=JSON.parse(sv); for(var k in o) if(k in S) S[k]=o[k]; } }catch(e){}
+function save(){ try{ window.localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+function award(key,n){ if(!S.xp[key]){ S.xp[key]=n; save(); drawXp(); toast('+'+n+' XP'); return true; } return false; }
+function totalXp(){ var t=0; for(var k in S.xp) t+=S.xp[k]; return t; }
+var MAXXP=900;
+function drawXp(){ var t=totalXp(); $('#xpn').textContent=t+' XP'; $('#xpi').style.width=Math.min(100,Math.round(t/MAXXP*100))+'%'; }
+
+/* ---------- theme ---------- */
+$('#tth').onclick=function(){ var r=document.documentElement, cur=r.getAttribute('data-theme'); var dark=cur?cur==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches; r.setAttribute('data-theme',dark?'light':'dark'); };
+
+/* ---------- timer ---------- */
+var secs=7200, running=false, hideClock=false;
+function drawClock(){ var m=Math.floor(Math.max(secs,0)/60), s=Math.max(secs,0)%60; $('#clock').textContent=hideClock?'•••:••':((m<100?(m<10?'00':'0'):'')+m).slice(-3)+':'+(s<10?'0':'')+s; $('#clock').classList.toggle('off',hideClock); $('#tpause').textContent=running?'⏸ Пауза':(secs<7200?'▶ Продовжити':'▶ Старт'); }
+setInterval(function(){ if(!running) return; if(secs>0){ secs--; drawClock(); if(secs===0){ running=false; drawClock(); toast('Час уроку закінчився 🎉 Заверш підсумок.'); } } },1000);
+$('#tpause').onclick=function(){ running=!running; drawClock(); };
+$('#tplus').onclick=function(){ secs+=300; drawClock(); toast('Додано 5 хвилин'); };
+$('#ttog').onclick=function(){ hideClock=!hideClock; this.textContent=hideClock?'👁 Показати':'👁 Сховати'; drawClock(); };
+
+/* mini timers inside stages */
+var mtid=null, mLeft=0, mTot=0;
+function stopM(){ if(mtid){ clearInterval(mtid); mtid=null; } }
+function fm(n){ var m=Math.floor(n/60), s=n%60; return m+':'+(s<10?'0':'')+s; }
+function miniTimer(sec){ return '<div class="timerbox"><div class="tnum" id="mn" role="timer">'+fm(sec)+'</div><div class="tbar" aria-hidden="true"><i id="mb"></i></div><p class="tmsg" id="mm">Натисни «Старт», коли будеш готова. Короткі відповіді — це нормально.</p></div>'; }
+function runM(sec,end){ stopM(); mTot=sec; mLeft=sec; $('#mn').textContent=fm(mLeft); $('#mb').style.width='100%'; $('#mm').textContent='Говори! Не зупиняйся.'; mtid=setInterval(function(){ mLeft--; $('#mn').textContent=fm(mLeft); $('#mb').style.width=(mLeft/mTot*100)+'%'; if(mLeft<=0){ stopM(); $('#mm').textContent=end||'Час вийшов. Чудово!'; } },1000); }
+
+/* ---------- rescue drawer ---------- */
+var PANIC=[['How do you say... in English?','Як сказати ... англійською?'],['Let me think for a second.','Дайте мені секунду подумати.'],['Can you repeat that, please?','Можете повторити, будь ласка?'],['Could you speak a bit slower?','Можете говорити трохи повільніше?'],['I\u2019m not sure, but I think...','Я не впевнена, але думаю...'],['What does ... mean?','Що означає ...?'],['Sorry, I didn\u2019t catch that.','Вибачте, я не розчула.'],['Can I say it another way?','Можна я скажу по-іншому?']];
+function drawDrawer(){ $('#drawer').innerHTML='<div class="row between"><h2 style="margin:0">🆘 Фрази порятунку</h2><button class="btn" id="dclose">✕ Закрити</button></div><p class="muted">Натисни 🔊, щоб почути фразу. Ці фрази рятують у будь-якій розмові.</p>'+PANIC.map(function(p,i){ return '<div class="ph"><div class="e">'+esc(p[0])+'</div><div class="muted">'+esc(p[1])+'</div><div class="row" style="margin-top:6px"><button class="btn" data-ps="'+i+'">🔊 Послухати</button><button class="btn" data-pc="'+i+'">Копіювати</button></div></div>'; }).join('')+'<div class="okb">Помилки — це нормально. Просити повторити — це ввічливо і дуже корисно.</div>'; $('#dclose').onclick=closeD; bindA('data-ps',function(v){ say(PANIC[parseInt(v,10)][0].replace('...','something')); }); bindA('data-pc',function(v){ copyText(PANIC[parseInt(v,10)][0]); }); }
+function openD(){ drawDrawer(); $('#drawer').classList.add('open'); $('#veil').classList.add('open'); $('#drawer').setAttribute('aria-hidden','false'); $('#dclose').focus(); }
+function closeD(){ $('#drawer').classList.remove('open'); $('#veil').classList.remove('open'); $('#drawer').setAttribute('aria-hidden','true'); $('#sosBtn').focus(); }
+$('#sosBtn').onclick=openD; $('#veil').onclick=closeD; document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeD(); });
+
+/* ---------- stages ---------- */
+var STG=[['1. Warm-Up','10 хв'],['2. Words & Reading','15 хв'],['3. Budget','20 хв'],['4. Brain Break','10 хв'],['5. Roleplay','25 хв'],['6. Compare & Debate','25 хв'],['7. Wrap-Up','15 хв']];
+function drawStages(){ $('#stages').innerHTML=STG.map(function(s,i){ return '<button class="sg'+(S.done[i]?' done':'')+'" data-sg="'+i+'"'+(S.stage===i?' aria-current="true"':'')+'>'+(S.done[i]?'✓ ':'')+esc(s[0])+'<small>'+esc(s[1])+'</small></button>'; }).join(''); bindA('data-sg',function(v){ go(parseInt(v,10)); }); drawXp(); }
+function go(i){ S.stage=i; save(); stopM(); try{ if(canSpeak) window.speechSynthesis.cancel(); }catch(e){} render(); window.scrollTo(0,0); }
+function stageDone(i){ if(!S.done[i]){ S.done[i]=1; save(); toast('Етап '+(i+1)+' пройдено! 🎉'); } }
+function render(){ drawStages(); [r1,r2,r3,r4,r5,r6,r7][S.stage](); }
+function nextRow(label){ return '<div class="row" style="margin-top:14px"><button class="btn main" id="nxt">'+label+'</button></div>'; }
+function bindNext(){ var n=$('#nxt'); if(n) n.onclick=function(){ go(Math.min(S.stage+1,6)); }; }
+function vibeInfo(){ return ({city:['🏙️','Lisbon, city break'],beach:['🏖️','Algarve, beach'],mount:['🏔️','Swiss Alps, mountains']})[S.vibe]||['✈️','your dream weekend']; }
+
+/* ================= STAGE 1 ================= */
+var THIS=[['Beach','Mountains'],['City break','Countryside'],['Hotel','Apartment'],['Plan everything','Be spontaneous'],['Street food','Restaurant'],['Early morning','Late night'],['Train','Plane'],['Take photos','Just enjoy the moment']];
+var TWOT=[{s:['Mia hates flying, but she loves long train trips.','Mia speaks four languages.','Mia lives in a tiny house on a boat.'],lie:1,ex:'The lie: Mia speaks four languages. (She speaks only two.)'},{s:['Tom once lost his passport in Rome.','Tom can cook paella.','Tom has visited fifty countries.'],lie:2,ex:'The lie: Tom has visited fifty countries. (He has visited eight.)'},{s:['Sara never uses a map. She asks local people.','Sara sleeps in hostels to save money.','Sara is afraid of water, so she never goes to the beach.'],lie:2,ex:'The lie: Sara is afraid of water. (She loves swimming.)'}];
+var REACT=['You lost your suitcase at the airport. What do you say to the staff?','Your hotel room is too small. What do you ask the receptionist?','A stranger asks: “Where are you from?” Answer and ask a question back.','You are hungry in a new city. Ask a local for a recommendation.','Your train is 40 minutes late. What do you say at the information desk?','You love the view from your window. Tell a friend about it.','Someone is sitting in your seat on the train. What do you say politely?','You want a cheaper room. How do you ask?'];
+function r1(){
+  var s=S.s1, h='<div class="card"><h2>🎬 Ваш ультра-вікенд починається!</h2><p class="muted">Ви виграли подорож на вікенд. Спочатку обери «вайб» поїздки, а потім розмовляй: короткі картки, жодних неправильних відповідей.</p>';
+  var vibes=[['city','🏙️','City break','Місто, кафе, музеї'],['beach','🏖️','Beach','Море, сонце, відпочинок'],['mount','🏔️','Mountains','Гори, природа, активність']];
+  h+='<h3>1) Обери вайб поїздки</h3><div class="vibes">'+vibes.map(function(v){ return '<button class="opt'+(S.vibe===v[0]?' pick':'')+'" data-vb="'+v[0]+'"><span style="font-size:34px;display:block">'+v[1]+'</span>'+v[2]+'<br><small>'+v[3]+'</small></button>'; }).join('')+'</div>';
+  if(S.vibe){ var vi=vibeInfo(); h+='<div class="okb"><b>Твоя поїздка:</b> '+vi[0]+' '+vi[1]+'. Це вплине на підказки у наступних етапах (⭐ рекомендовані пункти).</div>'; }
+  h+='<h3>2) Розмовні картки</h3><div class="chips">'+[['tt','⚡ This or That'],['tr','🕵️ Two Truths and a Lie'],['rc','⏱️ Quick Reaction']].map(function(m){ return '<button class="chip'+(s.mode===m[0]?' sel':'')+'" data-m1="'+m[0]+'">'+m[1]+'</button>'; }).join('')+'</div>';
+  var n1=Object.keys(s.tt).length, n2=Object.keys(s.tr).length, n3=Object.keys(s.rc).length;
+  if(s.mode==='tt'){ var p=THIS[s.i%THIS.length], pk=s.ch[s.i]; h+='<div class="dots">'+THIS.map(function(_,i){ return '<span class="dot'+(s.tt[i]?' done':'')+(i===s.i%THIS.length?' on':'')+'"></span>'; }).join('')+'</div><div class="big">Which one do you choose?</div><div class="opts">'+[0,1].map(function(k){ return '<button class="opt'+(pk===k?' pick':'')+'" data-ch="'+k+'">'+esc(p[k])+'</button>'; }).join('')+'</div>';
+    if(pk!==undefined) h+='<div class="tip"><b>🎤 Скажи:</b> I\u2019d rather '+esc(p[pk].toLowerCase())+' because... (2 речення)</div>'+chipsH(['I\u2019d rather... because...','I prefer..., but...','It depends on...','For me, ... is better.'],'data-st')+'<div class="row"><button class="btn'+(s.tt[s.i%THIS.length]?' good':' gold')+'" id="ok1">'+(s.tt[s.i%THIS.length]?'✓ Виконано':'✓ Виконано (+10 XP)')+'</button><button class="btn" id="nx1">Наступна →</button></div>';
+    else h+='<p class="muted">Обери один варіант, а потім поясни чому.</p><div class="row"><button class="btn" id="nx1">Пропустити →</button></div>'; }
+  else if(s.mode==='tr'){ var t=TWOT[s.i%TWOT.length], g=s.ch['t'+s.i%TWOT.length]; h+='<div class="tip">Прочитай три речення про Мію/Тома/Сару. Два з них правда, одне брехня. Вгадай брехню.</div><div class="list1">'+t.s.map(function(x,k){ var cl='opt'; if(g!==undefined){ if(k===t.lie) cl+=' good'; else if(k===g) cl+=' soft'; } return '<button class="'+cl+'" data-tl="'+k+'"'+(g!==undefined?' disabled':'')+'>'+(k+1)+'. '+esc(x)+'</button>'; }).join('')+'</div><div class="row"><button class="btn" data-hear="'+esc(t.s.join(' '))+'">🔊 Послухати</button></div>';
+    if(g!==undefined) h+='<div class="'+(g===t.lie?'okb':'warn')+'">'+(g===t.lie?'<b>Так!</b> ':'<b>Майже.</b> ')+esc(t.ex)+'</div><div class="tip"><b>🎤 Твоя черга:</b> скажи три речення про свої подорожі: дві правди й одну брехню. Репетитор вгадує.</div>'+chipsH(['I have been to...','Last year I...','I can...','I have never...'],'data-st')+'<div class="row"><button class="btn'+(s.tr[s.i%TWOT.length]?' good':' gold')+'" id="ok1">'+(s.tr[s.i%TWOT.length]?'✓ Виконано':'✓ Виконано (+15 XP)')+'</button><button class="btn" id="nx1">Наступний набір →</button></div>'; }
+  else { var q=REACT[s.i%REACT.length]; h+='<div class="dots">'+REACT.map(function(_,i){ return '<span class="dot'+(s.rc[i]?' done':'')+(i===s.i%REACT.length?' on':'')+'"></span>'; }).join('')+'</div><div class="big">'+esc(q)+'</div><div class="row"><button class="btn" data-hear="'+esc(q)+'">🔊 Послухати</button></div>'+chipsH(['Excuse me, could you...?','I\u2019m sorry, but...','Is it possible to...?','Thank you so much!'],'data-st')+miniTimer(20)+'<div class="row"><button class="btn main" id="sm">Старт 20 с</button><button class="btn'+(s.rc[s.i%REACT.length]?' good':' gold')+'" id="ok1">'+(s.rc[s.i%REACT.length]?'✓ Виконано':'✓ Виконано (+10 XP)')+'</button><button class="btn" id="nx1">Наступна →</button></div>'; }
+  var tot=n1+n2+n3; h+='<div class="muted" style="margin-top:10px">Виконано карток: <b>'+tot+'</b> (потрібно 6 + вибраний вайб для завершення етапу)</div>';
+  if(S.vibe&&tot>=6){ stageDone(0); award('s1done',40); h+='<div class="okb"><b>Розминка пройдена! 🔥</b></div>'+nextRow('Далі: Words & Reading →'); }
+  $('#view').innerHTML=h+'</div>'; drawStages(); bindNext();
+  bindA('data-vb',function(v){ S.vibe=v; save(); award('vibe',10); r1(); });
+  bindA('data-m1',function(v){ s.mode=v; s.i=0; save(); stopM(); r1(); });
+  bindA('data-ch',function(v){ s.ch[s.i]=parseInt(v,10); save(); r1(); });
+  bindA('data-tl',function(v){ s.ch['t'+s.i%TWOT.length]=parseInt(v,10); save(); r1(); });
+  bindA('data-hear',function(v){ say(v); });
+  var tpl=s.mode==='tt'?['I\u2019d rather... because...','I prefer..., but...','It depends on...','For me, ... is better.']:s.mode==='tr'?['I have been to...','Last year I...','I can...','I have never...']:['Excuse me, could you...?','I\u2019m sorry, but...','Is it possible to...?','Thank you so much!']; bindChips('data-st',tpl);
+  if($('#sm')) $('#sm').onclick=function(){ runM(20,'Час вийшов. Чудова реакція!'); };
+  if($('#ok1')) $('#ok1').onclick=function(){ var i=s.i; if(s.mode==='tt'){ s.tt[i%THIS.length]=1; award('tt'+i%THIS.length,10); } else if(s.mode==='tr'){ s.tr[i%TWOT.length]=1; award('tr'+i%TWOT.length,15); } else { s.rc[i%REACT.length]=1; award('rc'+i%REACT.length,10); } save(); r1(); };
+  if($('#nx1')) $('#nx1').onclick=function(){ s.i++; stopM(); save(); r1(); };
+}
+
+/* ================= STAGE 2 ================= */
+var GL={tram:['an electric vehicle that runs on rails in a city','трамвай'],crowded:['full of people','переповнений, людний'],local:['from or in the place you visit','місцевий'],budget:['the money you plan to spend','бюджет'],view:['what you can see from a place','краєвид, вид'],staff:['the people who work in a hotel or shop','персонал'],noisy:['making a lot of loud sound','галасливий'],location:['the place where something is','розташування'],market:['a place where people sell fresh food and things','ринок'],souvenirs:['things you buy to remember a trip','сувеніри'],bargain:['to try to get a lower price','торгуватися'],cash:['money in notes and coins','готівка'],crowds:['large groups of people','натовпи'],value:['getting good quality for the money you pay','співвідношення ціна-якість']};
+var TXT=[
+ {tab:'📱 Travel post',who:'@mia.travels',sub:'Weekend in Lisbon 🇵🇹',t:'Just landed in Lisbon! 🇵🇹 The city is so colorful. Tip 1: take the old yellow [[tram|tram]] early, because later it\u2019s very [[crowded|crowded]]. Tip 2: eat at small [[local|local]] places. A big lunch costs only €8! Tip 3: climb to the viewpoint at sunset. The [[view|view]] is unreal. My [[budget|budget]] for this weekend is €150, and I still have money for ice cream. 🍦 What should I try next? Tell me in the comments!',uk:'Щойно приземлилася в Лісабоні! Місто таке яскраве. Порада 1: їдьте на старому жовтому трамваї зранку, бо потім там дуже людно. Порада 2: їжте в маленьких місцевих закладах. Великий обід коштує лише €8! Порада 3: піднімайтеся на оглядовий майданчик на заході. Краєвид неймовірний. Мій бюджет на вікенд €150, і ще залишаються гроші на морозиво. Що спробувати далі? Напишіть у коментарях!'},
+ {tab:'⭐ Hotel review',who:'Anna K.',sub:'★★★☆☆ Nice place, but...',t:'We stayed two nights at Hotel Sol. The [[staff|staff]] were friendly and the breakfast was delicious. However, our room was small and the street was [[noisy|noisy]]. The [[location|location]] is perfect: the beach is a five-minute walk. The Wi-Fi is slow in the evening, so don\u2019t plan to watch movies. Next time, I would ask for a quiet room on a higher floor. Overall, it\u2019s good [[value|value for money]], but not perfect.',uk:'Ми зупинилися на дві ночі в готелі Sol. Персонал був привітний, а сніданок смачний. Однак наш номер був маленький, а вулиця галаслива. Розташування ідеальне: до пляжу п\'ять хвилин пішки. Увечері Wi-Fi повільний, тому не плануйте дивитися фільми. Наступного разу я попросила б тихий номер на вищому поверсі. Загалом, гарне співвідношення ціна-якість, але не ідеально.'},
+ {tab:'🗺️ Local guide',who:'City Guide',sub:'Sunday Market',t:'Every Sunday, the [[market|market]] opens at 8 a.m. You can find fresh fruit, handmade bags and [[souvenirs|souvenirs]]. Come early to avoid the [[crowds|crowds]]. Many sellers speak a little English, but it\u2019s polite to learn two words: “please” and “thank you”. You can [[bargain|bargain]] for non-food items, but don\u2019t be rude. [[cash|Cash]] is better than cards, and bring a small bag. The nearest bus stop is 200 meters away.',uk:'Щонеділі ринок відкривається о 8 ранку. Тут можна знайти свіжі фрукти, сумки ручної роботи та сувеніри. Приходьте рано, щоб уникнути натовпів. Багато продавців трохи говорять англійською, але ввічливо знати два слова: «please» та «thank you». Можна торгуватися за непродуктові товари, але без грубості. Готівка краща за картки, і візьміть маленьку сумку. Найближча автобусна зупинка за 200 метрів.'}
+];
+var QUIZ=[['How much is a big lunch in Lisbon?',['€8','€80','€18'],0,'Mia: “A big lunch costs only €8!”'],['Why should you take the tram early?',['Later it is very crowded.','It is cheaper.','It stops at noon.'],0,'“Later it\u2019s very crowded.”'],['What is good about the hotel?',['Friendly staff and delicious breakfast','Fast Wi-Fi','A quiet street'],0,'“The staff were friendly and the breakfast was delicious.”'],['What would Anna ask for next time?',['A quiet room on a higher floor','A cheaper room','A room with a TV'],0,'“I would ask for a quiet room on a higher floor.”'],['What time does the market open?',['8 a.m.','10 a.m.','6 a.m.'],0,'“Every Sunday, the market opens at 8 a.m.”'],['What is better at the market?',['Cash','Cards','Phone payments'],0,'“Cash is better than cards.”']];
+function mkMatch(){ var keys=shuffle(Object.keys(GL)).slice(0,7); return {keys:keys,right:shuffle(keys),sel:null,done:{}}; }
+var MT=null;
+function r2(){
+  var s=S.s2, p=TXT[s.tab], h='<div class="card"><h2>📚 Words & Micro-Reading</h2><p class="muted">Читай короткі тексти зі своєї поїздки. Натискай на підкреслені слова: побачиш значення, переклад і озвучку. Потім виконай матчинг і міні-квіз.</p><div class="chips">'+TXT.map(function(x,i){ return '<button class="chip'+(s.tab===i?' sel':'')+'" data-tx="'+i+'">'+x.tab+'</button>'; }).join('')+'</div>';
+  h+='<div class="page"><div class="hd"><span class="av">'+esc(p.who.replace(/[^A-Za-z]/g,'').charAt(0).toUpperCase())+'</span><div>'+esc(p.who)+'<div class="muted" style="font-weight:500;font-size:13.5px">'+esc(p.sub)+'</div></div></div><p>'+mkH(p.t)+'</p><div class="row"><button class="btn" data-hear="'+esc(p.t.replace(/\[\[\w+\|([^\]]+)\]\]/g,'$1'))+'">🔊 Послухати текст</button><button class="btn" id="uk2">🇺🇦 '+(s.uk?'Сховати переклад':'Показати переклад')+'</button></div>'+(s.uk?'<div class="tip">'+esc(p.uk)+'</div>':'')+'</div>';
+  if(s.tip&&GL[s.tip]){ var g=GL[s.tip]; h+='<div class="tipbox"><div class="row between"><span class="w">'+esc(s.tip==='value'?'value for money':s.tip)+'</span><button class="btn" id="tsay">🔊</button></div><div><b>Simple English:</b> '+esc(g[0])+'</div><div><b>Українською:</b> '+esc(g[1])+'</div></div>'; }
+  if(!MT) MT=mkMatch();
+  h+='<h3>Матчинг: слово → переклад</h3><div class="mt"><div class="col">'+MT.keys.map(function(k){ var d=!!s.match[k]; return '<button class="opt'+(d?' done':'')+(MT.sel===k?' sel':'')+'" data-ml="'+k+'"'+(d?' disabled':'')+'>'+esc(k==='value'?'value for money':k)+'</button>'; }).join('')+'</div><div class="col">'+MT.right.map(function(k){ var d=!!s.match[k]; return '<button class="opt'+(d?' done':'')+'" data-mr="'+k+'"'+(d?' disabled':'')+'>'+esc(GL[k][1])+'</button>'; }).join('')+'</div></div>';
+  var mc=Object.keys(s.match).length; s.mDone=mc>=MT.keys.length;
+  h+='<div class="muted" style="margin:6px 0">Знайдено пар: <b>'+mc+'</b> з '+MT.keys.length+'</div>'+(s.mDone?'<div class="okb"><b>Матчинг пройдено! ✓</b> <button class="btn" id="nm">Нова гра</button></div>':'');
+  h+='<h3>Міні-квіз (6 запитань)</h3>'+QUIZ.map(function(q,i){ var a=s.quiz[i], has=a!==undefined; return '<div class="big" style="font-size:18px">'+(i+1)+'. '+esc(q[0])+'</div><div class="list1">'+q[1].map(function(o,m){ var cl='opt'; if(has){ if(m===q[2]) cl+=' good'; else if(m===a) cl+=' soft'; } return '<button class="'+cl+'" data-qa="'+i+'|'+m+'"'+(has?' disabled':'')+'>'+(has&&m===q[2]?'✓ ':'')+esc(o)+'</button>'; }).join('')+'</div>'+(has?'<div class="'+(a===q[2]?'okb':'warn')+'">'+(a===q[2]?'<b>Точно!</b> ':'<b>Майже.</b> ')+esc(q[3])+'</div>':''); }).join('');
+  var right=QUIZ.filter(function(q,i){ return s.quiz[i]===q[2]; }).length, answered=Object.keys(s.quiz).length;
+  if(s.mDone&&answered===QUIZ.length&&right>=4){ stageDone(1); award('s2done',50); h+='<div class="okb" style="margin-top:12px"><b>Етап пройдено! Правильних відповідей: '+right+' з 6 🎉</b></div>'+nextRow('Далі: Budget Challenge →'); }
+  else if(answered===QUIZ.length&&right<4) h+='<div class="warn" style="margin-top:12px">Прочитай тексти ще раз і спробуй квіз знову.<div class="row" style="margin-top:6px"><button class="btn" id="rq">Скинути квіз</button></div></div>';
+  $('#view').innerHTML=h+'</div>'; drawStages(); bindNext();
+  bindA('data-tx',function(v){ s.tab=parseInt(v,10); s.tip=null; s.uk=false; save(); r2(); });
+  bindA('data-gl',function(v){ s.tip=v; save(); r2(); say(v==='value'?'value for money':v); });
+  bindA('data-hear',function(v){ say(v); });
+  if($('#tsay')) $('#tsay').onclick=function(){ say((s.tip==='value'?'value for money':s.tip)+'. '+GL[s.tip][0]); };
+  if($('#uk2')) $('#uk2').onclick=function(){ s.uk=!s.uk; r2(); };
+  bindA('data-ml',function(v){ MT.sel=v; r2(); });
+  bindA('data-mr',function(v){ if(!MT.sel){ toast('Спочатку обери слово зліва'); return; } if(MT.sel===v){ s.match[v]=1; award('m_'+v,5); MT.sel=null; say(v==='value'?'value for money':v); } else { toast('Майже! Спробуй ще раз'); } save(); r2(); });
+  bindA('data-qa',function(v){ var a=v.split('|'); s.quiz[a[0]]=parseInt(a[1],10); if(parseInt(a[1],10)===QUIZ[a[0]][2]) award('q'+a[0],10); save(); r2(); });
+  if($('#nm')) $('#nm').onclick=function(){ MT=mkMatch(); s.match={}; r2(); };
+  if($('#rq')) $('#rq').onclick=function(){ s.quiz={}; save(); r2(); };
+}
+
+/* ================= STAGE 3 ================= */
+var ITEMS=[
+ {id:'bus',em:'🚌',en:'Day bus pass',uk:'Денний проїзний',p:12,rec:['city']},
+ {id:'taxi',em:'🚕',en:'Taxi from the airport',uk:'Таксі з аеропорту',p:25,rec:[]},
+ {id:'bike',em:'🚲',en:'Bike rental',uk:'Оренда велосипеда',p:15,rec:['beach','mount']},
+ {id:'din',em:'🍽️',en:'Dinner at a local place',uk:'Вечеря в місцевому закладі',p:22,rec:['city']},
+ {id:'brk',em:'🥐',en:'Breakfast & coffee',uk:'Сніданок і кава',p:8,rec:['mount']},
+ {id:'str',em:'🌮',en:'Street food tasting',uk:'Дегустація вуличної їжі',p:10,rec:['city']},
+ {id:'jui',em:'🧃',en:'Fresh juice',uk:'Свіжий сік',p:5,rec:['beach']},
+ {id:'mus',em:'🎟️',en:'Museum ticket',uk:'Квиток у музей',p:14,rec:['city']},
+ {id:'boat',em:'🛥️',en:'Boat tour',uk:'Прогулянка на човні',p:30,rec:['beach']},
+ {id:'con',em:'🎶',en:'Concert night',uk:'Вечір із концертом',p:28,rec:[]},
+ {id:'hike',em:'🥾',en:'Hiking guide',uk:'Гід для піших маршрутів',p:35,rec:['mount']},
+ {id:'sou',em:'🛍️',en:'Souvenirs',uk:'Сувеніри',p:18,rec:[]},
+ {id:'sun',em:'🧴',en:'Sunscreen',uk:'Сонцезахисний крем',p:9,rec:['beach']},
+ {id:'pow',em:'🔋',en:'Power bank',uk:'Павербанк',p:15,rec:['mount']},
+ {id:'sim',em:'📶',en:'SIM card',uk:'SIM-картка',p:10,rec:[]},
+ {id:'pho',em:'📷',en:'Photo walk with a guide',uk:'Фотопрогулянка з гідом',p:20,rec:['city']}
+];
+var JS3=['I\u2019d rather...','We definitely need...','It\u2019s worth it because...','It\u2019s a bit expensive, but...','I can\u2019t live without...'];
+function ct(){ var t=0; ITEMS.forEach(function(i){ if(S.s3.cart[i.id]) t+=i.p; }); return t; }
+function m$(n){ return '$'+n.toFixed(2); }
+function r3(){
+  var s=S.s3, total=ct(), pct=Math.min(100,Math.round(total/100*100)), over=total>100, near=total>85, sel=ITEMS.filter(function(i){ return s.cart[i.id]; });
+  var vi=vibeInfo(), h='<div class="card"><h2>💰 Budget & Decision Challenge</h2><div class="tip"><b>Ситуація:</b> перельоти й готель вже оплачені призом. На вікенд у вас є <b>$100</b> кишенькових грошей. Обери пункти ('+vi[0]+' '+vi[1]+', ⭐ = рекомендовано для твого вайбу) і поясни кожен вибір вголос.</div>';
+  h+='<div class="lay"><div><div class="items">'+ITEMS.map(function(i){ return '<button class="item" data-it="'+i.id+'" aria-pressed="'+(!!s.cart[i.id])+'"><span class="em">'+i.em+'</span><b>'+esc(i.en)+'</b><span class="u">'+esc(i.uk)+'</span><span class="p">'+m$(i.p)+'</span>'+(i.rec.indexOf(S.vibe)>-1?'<span class="rec">⭐ рекомендовано</span>':'')+'</button>'; }).join('')+'</div></div>'+
+   '<div class="cart"><b>Твій список</b><div class="meter'+(near?' warn':'')+'" aria-label="Бюджет"><i style="width:'+pct+'%"></i></div><div class="row between"><span>'+m$(total)+' з $100</span><span>Залишок: '+m$(Math.max(0,100-total))+'</span></div>'+(over?'<div class="warn">Трохи понад бюджет. Прибери один пункт або скажи: «It\u2019s a bit expensive.»</div>':near?'<div class="warn">Майже весь бюджет! Що найважливіше?</div>':'')+'<ul style="list-style:none;padding:0;margin:6px 0">'+(sel.length?sel.map(function(i){ return '<li style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:3px 0"><span>'+i.em+' '+esc(i.en)+'</span><span>'+m$(i.p)+'</span></li>'; }).join(''):'<li class="muted">Порожньо</li>')+'</ul><button class="btn" id="clr">Очистити</button></div></div>';
+  if(sel.length){ h+='<h3>🎤 Поясни кожен вибір вголос</h3><div class="chips">'+JS3.map(function(x,i){ return '<button class="chip" data-js="'+i+'">'+esc(x)+'</button>'; }).join('')+'</div>'+sel.map(function(i){ var j=!!s.just[i.id]; return '<div class="just'+(j?' ok':'')+'"><div class="row between"><div><b>'+i.em+' '+esc(i.en)+'</b><div class="muted">Скажи 1–2 речення: чому цей пункт важливий для твоєї поїздки?</div></div><label class="row" style="gap:6px"><input type="checkbox" data-jc="'+i.id+'"'+(j?' checked':'')+'> <b>✓ Пояснила</b></label></div></div>'; }).join(''); }
+  var allJ=sel.length>=4&&sel.every(function(i){ return s.just[i.id]; })&&!over; s.fin=allJ;
+  h+='<div class="muted" style="margin-top:8px">Щоб завершити: мінімум 4 пункти, усі пояснені, сума не більша за $100.</div>';
+  if(allJ){ stageDone(2); award('s3done',60); h+='<div class="okb"><b>Бюджет-бос! Усі вибори обґрунтовано 🎉</b></div>'+nextRow('Далі: Brain Break →'); }
+  $('#view').innerHTML=h+'</div>'; drawStages(); bindNext();
+  bindA('data-it',function(v){ s.cart[v]=!s.cart[v]; if(!s.cart[v]) delete s.just[v]; else say(ITEMS.filter(function(i){return i.id===v;})[0].en); save(); r3(); });
+  bindChips('data-js',JS3);
+  var jc=document.querySelectorAll('[data-jc]'); for(var i=0;i<jc.length;i++) jc[i].onchange=function(){ var id=this.getAttribute('data-jc'); s.just[id]=this.checked; if(this.checked) award('j_'+id,10); save(); r3(); };
+  $('#clr').onclick=function(){ s.cart={}; s.just={}; save(); r3(); };
+}
+
+/* ================= STAGE 4 ================= */
+var TABOO=[['suitcase','bag, travel, clothes'],['passport','document, country, stamp'],['hotel','sleep, room, stay'],['beach','sand, sea, swim'],['tram','street, yellow, city'],['ticket','pay, train, bus'],['map','find, way, paper'],['camera','photo, picture, take'],['sunglasses','sun, eyes, wear'],['umbrella','rain, wet, open'],['souvenir','gift, remember, buy'],['airport','plane, fly, gate'],['market','buy, sell, fresh'],['taxi','car, driver, pay'],['backpack','bag, hiking, carry'],['breakfast','morning, eat, hotel']];
+var MYS=[{a:'suitcase',o:['suitcase','umbrella','backpack','camera'],c:['It has wheels.','People use it at the airport.','You put clothes in it.','It can be heavy.','It has a handle.','You pack it before a trip.']},{a:'passport',o:['ticket','passport','map','wallet'],c:['It is small.','It has your photo.','You show it at the border.','It has your name and a number.','You need it to travel abroad.','It has stamps.']},{a:'sunscreen',o:['soap','sunscreen','perfume','juice'],c:['It is a cream.','You use it in summer.','It protects your skin.','It smells like coconut.','You put it on before the beach.','It has SPF on the bottle.']}];
+function r4(){
+  var s=S.s4, h='<div class="card"><h2>🧠 Brain Break: розслабляємо мозок</h2><p class="muted">Це гра, а не іспит. Відпочинь і поговори легко. Можна зробити 30-секундну паузу на розтяжку.</p><div class="chips">'+[['taboo','🤐 Taboo'],['mys','🔍 Mystery Object']].map(function(m){ return '<button class="chip'+(s.mode===m[0]?' sel':'')+'" data-m4="'+m[0]+'">'+m[1]+'</button>'; }).join('')+'<button class="chip" id="str">🧘 30 с розтяжки</button></div>';
+  if(s.mode==='taboo'){ var w=TABOO[s.tn%TABOO.length], dn=Object.keys(s.tab).length; h+='<div class="tip"><b>Правила:</b> поясни слово, не називаючи його та червоні слова. Репетитор вгадує.</div><div class="page"><div class="big" style="text-align:center;font-size:clamp(30px,8vw,48px)">'+esc(w[0])+'</div><div class="chips" style="justify-content:center">'+w[1].split(', ').map(function(x){ return '<span class="chip plain" style="border-color:#C0392B;color:#C0392B;text-decoration:line-through">'+esc(x)+'</span>'; }).join('')+'</div></div><div class="chips">'+['It is a thing / a place...','You use it to...','You can find it in...','It is the opposite of...','It starts with...'].map(function(x,i){ return '<button class="chip" data-tp="'+i+'">'+esc(x)+'</button>'; }).join('')+'</div>'+miniTimer(45)+'<div class="row"><button class="btn main" id="sm">Старт 45 с</button><button class="btn gold" id="gu">✓ Вгадали! (+15 XP)</button><button class="btn" id="sk">Пропустити</button></div><div class="muted" style="margin-top:8px">Вгадано слів: <b>'+dn+'</b> (потрібно 3 для завершення)</div>'; }
+  else { var o=MYS[s.mys.oi%MYS.length], k=s.mys.clues, solved=s.mys.solved[s.mys.oi%MYS.length]; h+='<div class="tip"><b>Mystery Object:</b> відкривай підказки по одній і вгадуй предмет. Чим менше підказок, тим більше XP.</div><div class="list1">'+o.c.map(function(c,i){ return i<k?'<div class="opt" style="cursor:default">🔎 '+(i+1)+'. '+esc(c)+' <button class="chip" data-ch4="'+i+'" style="float:right">🔊</button></div>':'<div class="opt" style="opacity:.4;cursor:default">🔒 Підказка '+(i+1)+'</div>'; }).join('')+'</div><div class="row" style="margin:10px 0"><button class="btn" id="mc"'+(k>=o.c.length?' disabled':'')+'>Ще підказка</button></div><h3>Що це?</h3><div class="opts">'+o.o.map(function(x){ var cl='opt'; if(solved) cl+=x===o.a?' good':''; return '<button class="'+cl+'" data-mg="'+x+'"'+(solved?' disabled':'')+'>'+esc(x)+'</button>'; }).join('')+'</div>'+(solved?'<div class="okb"><b>Правильно! '+esc(o.a)+'</b> <button class="btn" id="nm4">Наступний предмет →</button></div><div class="tip"><b>🎤 Скажи:</b> It\u2019s a '+esc(o.a)+'. I always take it / I never take it on trips because...</div>':'<div class="muted">Скажи вголос: «I think it\u2019s a...»</div>'); }
+  var tdone=Object.keys(s.tab).length>=3, mdone=Object.keys(s.mys.solved).length>=1;
+  if(tdone&&mdone){ stageDone(3); award('s4done',50); h+='<div class="okb" style="margin-top:12px"><b>Brain Break пройдено! Свіжа голова 🎉</b></div>'+nextRow('Далі: Roleplay →'); }
+  else h+='<div class="muted" style="margin-top:10px">Щоб завершити етап: 3 слова в Taboo + 1 предмет у Mystery Object.</div>';
+  $('#view').innerHTML=h+'</div>'; drawStages(); bindNext();
+  bindA('data-m4',function(v){ s.mode=v; stopM(); save(); r4(); });
+  $('#str').onclick=function(){ var b=this; b.disabled=true; var n=30; b.textContent='🧘 '+n; var iv=setInterval(function(){ n--; b.textContent='🧘 '+n; if(n<=0){ clearInterval(iv); b.disabled=false; b.textContent='🧘 30 с розтяжки'; toast('Чудово! Повертаємося 💪'); } },1000); };
+  bindChips('data-tp',['It is a thing / a place...','You use it to...','You can find it in...','It is the opposite of...','It starts with...']);
+  if($('#sm')) $('#sm').onclick=function(){ runM(45,'Час вийшов. Було круто!'); };
+  if($('#gu')) $('#gu').onclick=function(){ s.tab[s.tn%TABOO.length]=1; award('tb'+s.tn%TABOO.length,15); s.tn++; stopM(); save(); r4(); };
+  if($('#sk')) $('#sk').onclick=function(){ s.tn++; stopM(); save(); r4(); };
+  var o2=MYS[s.mys.oi%MYS.length]; bindA('data-ch4',function(v){ say(o2.c[parseInt(v,10)]); });
+  if($('#mc')) $('#mc').onclick=function(){ s.mys.clues++; save(); r4(); };
+  bindA('data-mg',function(v){ if(v===o2.a){ s.mys.solved[s.mys.oi%MYS.length]=1; award('my'+s.mys.oi%MYS.length,Math.max(10,40-5*s.mys.clues)); say(o2.a); } else toast('Майже! Відкрий ще підказку'); save(); r4(); });
+  if($('#nm4')) $('#nm4').onclick=function(){ s.mys.oi++; s.mys.clues=1; save(); r4(); };
+}
+
+/* ================= STAGE 5 ================= */
+var SC=[
+ {t:'🏨 Hotel problem',set:'Ви повернулися в готель увечері. У номері немає гарячої води, а за стіною шумить вечірка.',tc:['Alex','receptionist · friendly but busy'],sc:['You','a tired guest'],goal:'Поясни проблему і домовся про рішення.',
+  steps:[{t:'Good evening! Welcome to Hotel Sol. How can I help you?',h:['Hi, I have a problem with my room.','Good evening! My room is not OK.'],s:'Hi, I have a problem with...',k:'problem · room'},{t:'I\u2019m so sorry to hear that. What\u2019s the problem?',h:['There is no hot water.','The room is very noisy.'],s:'There is no... / It\u2019s too...',k:'no hot water · noisy'},{br:[{l:'Ask for another room',t:'We are almost full tonight, but I can offer you room 31. It\u2019s smaller, but it\u2019s quiet.',h:['That\u2019s fine, thank you. Is there a window?','Is it on a higher floor?'],s:'Is there a...? / Is it...?',k:'smaller · quiet · window'},{l:'Ask for a discount',t:'I can give you a free breakfast tomorrow. Is that OK?',h:['Could I also get a small discount?','Yes, thank you. What time is breakfast?'],s:'Could I get...? / What time...?',k:'free breakfast · discount'}]},{t:'Is there anything else I can do for you?',h:['Could you help me with my bag, please?','Could you send someone to check the shower?'],s:'Could you...?',k:'help · bag · shower'},{t:'Of course! Have a good night.',h:['Thank you so much for your help.','Thanks! Good night.'],s:'Thank you for...',k:'thanks · good night'}],
+  tw:['Unexpected problem! The elevator is broken and your room is on the 6th floor.','Unexpected problem! Your key card doesn\u2019t work.','Unexpected problem! The receptionist says you must pay a deposit.'],ph:['Could you help me, please?','I\u2019d like to ask for...','Is it possible to...?','That\u2019s not what I expected.']},
+ {t:'🛍️ Market negotiation',set:'Неділя, ринок. Ви хочете купити ручну сумку, але ціна здається високою.',tc:['Maria','vendor · cheerful, loves to chat'],sc:['You','a tourist with a €35 budget'],goal:'Спробуй домовитися про кращу ціну та ввічливо оплати.',
+  steps:[{t:'Hello! Welcome! These bags are handmade. Do you like this one?',h:['Hi! It\u2019s beautiful. How much is it?','Yes, I love the color. How much is it?'],s:'How much is...?',k:'price · beautiful'},{t:'It\u2019s forty euros.',h:['It\u2019s a bit expensive for me.','Hmm, that\u2019s more than my budget.'],s:'It\u2019s a bit...',k:'expensive · budget'},{br:[{l:'Ask for a lower price',t:'OK, for you, thirty-five euros.',h:['Could you do thirty, please?','Thirty-five is still high. What about thirty?'],s:'Could you do...?',k:'thirty · lower'},{l:'Buy two bags',t:'Two bags? OK, seventy euros for both.',h:['Could I get a discount for two?','Can you do sixty for both?'],s:'Can you do...?',k:'two bags · both'}]},{t:'Alright, you win! Cash or card?',h:['Cash, please.','Do you take cards?'],s:'Do you take...?',k:'cash · card'},{t:'Here\u2019s your bag. Thank you! Have a great day!',h:['Thank you! Have a nice day.','It was nice to meet you.'],s:'Thank you...',k:'thank you'}],
+  tw:['Unexpected problem! The vendor says the card machine is broken.','Unexpected problem! The bag has a small hole.','Unexpected problem! Your friend calls: you must leave in two minutes.'],ph:['It\u2019s a bit expensive.','What\u2019s your best price?','I\u2019ll think about it.','Do you have a smaller one?']},
+ {t:'🎉 Small talk at an event',set:'Ви на місцевому фестивалі. До вас підходить місцевий житель і починає розмову.',tc:['Sam','a local · open and curious'],sc:['You','a visitor'],goal:'Підтримай розмову, розкажи про себе й попроси про пораду.',
+  steps:[{t:'Hi! Are you here for the first time?',h:['Yes, it\u2019s my first time. And you?','Yes! I arrived yesterday.'],s:'Yes, it\u2019s my first...',k:'first time · arrived'},{t:'Where are you from?',h:['I\u2019m from Ukraine, from...','I\u2019m from..., but I live in the US now.'],s:'I\u2019m from...',k:'from · live'},{t:'How long are you staying?',h:['Just for the weekend.','I\u2019m staying for three days.'],s:'I\u2019m staying for...',k:'weekend · days'},{br:[{l:'Ask for food tips',t:'You must try the grilled fish and the custard tart. Have you tried them?',h:['Not yet. Where can I try them?','No, I haven\u2019t. Are they expensive?'],s:'Where can I...?',k:'fish · tart · try'},{l:'Ask about transport',t:'The metro is easy and cheap. Buy a day pass at the station.',h:['How much is a day pass?','Where can I buy it?'],s:'How much...? / Where can I...?',k:'metro · day pass'}]},{t:'Enjoy your stay! Maybe we\u2019ll meet again.',h:['Thanks! It was nice to talk to you.','Nice to meet you. Have a good one!'],s:'Nice to meet you...',k:'nice · meet'}],
+  tw:['Unexpected problem! Sam asks a question you don\u2019t understand. Use a rescue phrase!','Unexpected problem! Sam invites you to dinner tonight, but you are busy.','Unexpected problem! Sam says the event is cancelled because of rain.'],ph:['Nice to meet you.','Do you have any tips?','That sounds great!','How long have you lived here?']}
+];
+function r5(){
+  var s=S.s5, sc=SC[s.sc], key='p'+s.sc; if(!s.path[key]) s.path[key]=[];
+  var raw=sc.steps, res=[], wait=null, idx=0;
+  for(var i=0;i<raw.length;i++){ var it=raw[i]; if(it.br){ var ch=s.path[key][i]; if(ch===undefined){ wait=it; idx=i; break; } res.push(it.br[ch]); } else res.push(it); }
+  var finished=!wait, tw=s.ts[s.sc]||[];
+  var h='<div class="card"><h2>🎭 Roleplay Simulator</h2><p class="muted">Обери сценку й рівень підказок. Репетитор читає репліки героя. Кнопка «Unexpected problem!» додає несподіванку.</p><div class="chips">'+SC.map(function(x,i){ return '<button class="chip'+(s.sc===i?' sel':'')+'" data-sc="'+i+'">'+(s.done[i]?'✓ ':'')+x.t+'</button>'; }).join('')+'</div><div class="chips"><span class="muted" style="align-self:center">Рівень:</span>'+[['easy','🟢 Easy: повні підказки'],['med','🟡 Medium: початки фраз'],['hard','🔴 Hard: лише ключові слова']].map(function(l){ return '<button class="chip'+(s.lvl===l[0]?' sel':'')+'" data-lv="'+l[0]+'">'+l[1]+'</button>'; }).join('')+'</div>';
+  h+='<div class="tip"><b>Ситуація:</b> '+esc(sc.set)+'<br><b>Мета:</b> '+esc(sc.goal)+'</div><div class="chars"><div class="char"><b>🧑 '+esc(sc.tc[0])+'</b>'+esc(sc.tc[1])+'</div><div class="char"><b>🙋 '+esc(sc.sc[0])+'</b>'+esc(sc.sc[1])+'</div></div><div class="muted">Корисні фрази:</div>'+chipsH(sc.ph,'data-pp');
+  h+=res.map(function(st,i){ var hint=s.lvl==='easy'?st.h.map(function(x){ return '<div>• <span class="eng">'+esc(x)+'</span></div>'; }).join(''):s.lvl==='med'?'<div>• <span class="eng">'+esc(st.s)+'</span></div>':'<div>🔑 '+esc(st.k)+'</div>'; return '<div class="step"><div class="t"><b>'+esc(sc.tc[0])+':</b><div style="flex:1" class="eng">'+esc(st.t)+'</div><button class="btn" data-ls="'+i+'" aria-label="Послухати">🔊</button></div><div class="hnt"><b>Твоя відповідь ('+(s.lvl==='easy'?'підказки':s.lvl==='med'?'початок':'ключові слова')+'):</b>'+hint+'</div></div>'; }).join('');
+  if(wait){ h+='<div class="step"><b>Що ти робиш далі? Обери:</b><div class="opts">'+wait.br.map(function(b,k){ return '<button class="opt" data-br="'+idx+'|'+k+'">'+esc(b.l)+'</button>'; }).join('')+'</div></div>'; }
+  if(tw.length) h+=tw.map(function(t){ return '<div class="twist">⚠️ '+esc(t)+' <button class="btn" data-tws="'+esc(t).replace(/"/g,'&quot;')+'">🔊</button></div>'; }).join('')+'<div class="muted">Придумай, що сказати. Використай «Фрази порятунку» 🆘.</div>';
+  h+='<div class="row" style="margin-top:12px"><button class="btn gold" id="twb">⚡ Unexpected problem!</button>'+(finished?'<button class="btn'+(s.done[s.sc]?' good':' main')+'" id="sdone">'+(s.done[s.sc]?'✓ Сценку завершено':'✓ Сценку завершено (+60 XP)')+'</button>':'')+'</div>';
+  var all=SC.filter(function(_,i){ return s.done[i]; }).length;
+  h+='<div class="muted" style="margin-top:8px">Завершено сцен: <b>'+all+'</b> з 3 (для етапу потрібно 2)</div>';
+  if(all>=2){ stageDone(4); h+='<div class="okb"><b>Ти справжня акторка! 🎬</b></div>'+nextRow('Далі: Compare & Debate →'); }
+  $('#view').innerHTML=h+'</div>'; drawStages(); bindNext();
+  bindA('data-sc',function(v){ s.sc=parseInt(v,10); save(); r5(); }); bindA('data-lv',function(v){ s.lvl=v; save(); r5(); });
+  bindChips('data-pp',sc.ph);
+  bindA('data-ls',function(v){ say(res[parseInt(v,10)].t); });
+  bindA('data-tws',function(v){ say(v.replace('Unexpected problem!','Unexpected problem.')); });
+  bindA('data-br',function(v){ var a=v.split('|'); s.path[key][parseInt(a[0],10)]=parseInt(a[1],10); save(); r5(); });
+  $('#twb').onclick=function(){ var pool=sc.tw.filter(function(t){ return tw.indexOf(t)<0; }); if(!pool.length) pool=sc.tw; var t=pick(pool); s.ts[s.sc]=(s.ts[s.sc]||[]).concat([t]); award('tw'+s.sc+'_'+s.ts[s.sc].length,10); save(); r5(); };
+  if($('#sdone')) $('#sdone').onclick=function(){ s.done[s.sc]=1; award('sc'+s.sc,60); save(); r5(); };
+}
+
+/* ================= STAGE 6 ================= */
+var CATS=[['price','💶 Price'],['food','🍽️ Food'],['act','🎟️ Activities'],['move','🚌 Getting around'],['weather','☀️ Weather'],['best','⭐ Best for']];
+var DEST=[
+ {id:'city',em:'🏙️',n:'Lisbon (City break)',f:{price:['€€ · about €150 per weekend','€€ · приблизно €150 на вікенд'],food:['Amazing street food and cafes','Чудова вулична їжа та кав\u2019ярні'],act:['Museums, trams, viewpoints, music','Музеї, трамваї, оглядові майданчики, музика'],move:['Metro, tram, and walking','Метро, трамвай і пішки'],weather:['Sunny, about 22°C in spring','Сонячно, близько 22°C навесні'],best:['People who love culture and food','Для тих, хто любить культуру й їжу']},sc:{price:3,food:5,act:4,weather:4,relax:3},ch:['Cities are noisy and crowded. Why not a quiet beach?','Eating out every day is expensive.','You will be tired after walking all day.']},
+ {id:'beach',em:'🏖️',n:'Algarve coast (Beach)',f:{price:['€€€ · about €250 per weekend','€€€ · приблизно €250 на вікенд'],food:['Fresh fish and seafood','Свіжа риба та морепродукти'],act:['Swimming, boat tours, bike rides','Плавання, прогулянки на човні, велосипеди'],move:['A rental car or a bike is best','Найкраще орендована машина або велосипед'],weather:['Hot and sunny, 28°C in summer','Спекотно й сонячно, 28°C влітку'],best:['People who want to relax','Для тих, хто хоче відпочити']},sc:{price:2,food:4,act:3,weather:5,relax:5},ch:['The beach gets boring after two days.','It\u2019s far from the airport.','It\u2019s very crowded in summer.']},
+ {id:'mount',em:'🏔️',n:'Swiss Alps village (Mountains)',f:{price:['€€€€ · about €400 per weekend','€€€€ · приблизно €400 на вікенд'],food:['Cheese, soup, and hot chocolate','Сир, суп і гарячий шоколад'],act:['Hiking, cable car, photo spots','Піші маршрути, канатна дорога, фотолокації'],move:['Trains and local buses','Потяги та місцеві автобуси'],weather:['Cool, about 12°C, can change fast','Прохолодно, близько 12°C, швидко змінюється'],best:['Active people who love nature','Для активних людей, які люблять природу']},sc:{price:1,food:3,act:5,weather:3,relax:4},ch:['It\u2019s too expensive!','What if the weather is bad?','You need special clothes and shoes.']}
+];
+var CRIT=[['price','💶 Price'],['food','🍽️ Food'],['act','🎟️ Activities'],['weather','☀️ Weather'],['relax','🧘 Relax']];
+var DEB=['My choice is... because...','First,... Second,... Also,...','I see your point, but...','That\u2019s true, however...','It\u2019s worth it because...','In conclusion, I would choose...'];
+function r6(){
+  var s=S.s6, cat=CATS[s.tab], h='<div class="card"><h2>⚖️ Deep Comparison & Debate</h2><p class="muted">Порівняй три напрямки за категоріями. Потім познач важливість критеріїв, перевір «рахунок» і захисти фінальний вибір. Золота рамка = твій вайб.</p><div class="tabsb">'+CATS.map(function(c,i){ return '<button class="chip'+(s.tab===i?' sel':'')+'" data-ct="'+i+'">'+c[1]+'</button>'; }).join('')+'<button class="chip" id="uk6">🇺🇦 '+(s.uk?'Сховати':'Переклад')+'</button></div><div class="cmp">'+DEST.map(function(d){ return '<div class="dest'+(d.id===S.vibe?' fav':'')+'"><div class="h">'+d.em+' '+esc(d.n)+'</div><div class="b"><div class="eng">'+esc(d.f[cat[0]][0])+'</div>'+(s.uk?'<div class="muted">'+esc(d.f[cat[0]][1])+'</div>':'')+'<div class="row" style="margin-top:6px"><button class="btn" data-dl="'+d.id+'">🔊</button></div></div></div>'; }).join('')+'</div>';
+  h+='<h3>1) Що для тебе важливо? (1–3 ⭐)</h3><div class="w3">'+CRIT.map(function(c){ var v=s.w[c[0]]||0; return '<div class="r"><b>'+c[1]+'</b><span>'+[1,2,3].map(function(n){ return '<button class="star'+(v>=n?' on':'')+'" data-wt="'+c[0]+'|'+n+'" aria-label="'+n+'">⭐</button>'; }).join('')+'</span></div>'; }).join('')+'</div>';
+  var set=CRIT.every(function(c){ return s.w[c[0]]; });
+  if(set){ award('weights',20); var sc=DEST.map(function(d){ var t=0; CRIT.forEach(function(c){ t+=s.w[c[0]]*d.sc[c[0]]; }); return {d:d,t:t}; }), mx=Math.max.apply(null,sc.map(function(x){return x.t;})), best=sc.filter(function(x){return x.t===mx;})[0];
+    h+='<div class="tip"><b>Твій «рахунок» напрямків:</b>'+sc.map(function(x){ return '<div class="sc"><span>'+x.d.em+' '+esc(x.d.n.split(' (')[0])+'</span><div class="b"><i style="width:'+Math.round(x.t/mx*100)+'%"></i></div><b>'+x.t+'</b></div>'; }).join('')+'</div><div class="okb">За твоїми критеріями найкраще підходить: <b>'+best.d.em+' '+esc(best.d.n)+'</b>. Ти можеш погодитися або захистити інший варіант.</div>'; }
+  else h+='<div class="muted">Познач усі 5 критеріїв, щоб побачити рахунок.</div>';
+  h+='<h3>2) Фінальний вибір і захист</h3><div class="row">'+DEST.map(function(d){ return '<button class="chip'+(s.fav===d.id?' sel':'')+'" data-fv="'+d.id+'">'+d.em+' '+esc(d.n.split(' (')[0])+'</button>'; }).join('')+'</div>';
+  if(s.fav){ var fd=DEST.filter(function(d){return d.id===s.fav;})[0]; h+='<div class="tip"><b>🎤 Захисти вибір:</b> My choice is '+esc(fd.n.split(' (')[0])+'. First,... Second,... However,... In conclusion,...</div>'+chipsH(DEB,'data-db')+'<h3>Репетитор заперечує. Відповідай:</h3>'+fd.ch.map(function(c,i){ var k=s.fav+i, ok=!!s.ctr[k]; return '<div class="just'+(ok?' ok':'')+'"><div class="row between"><div><b>Tutor:</b> <span class="eng">'+esc(c)+'</span> <button class="chip" data-cs="'+i+'">🔊</button></div><label class="row" style="gap:6px"><input type="checkbox" data-cc="'+k+'"'+(ok?' checked':'')+'> <b>✓ Відповіла</b></label></div></div>'; }).join('');
+    var nn=fd.ch.filter(function(_,i){ return s.ctr[s.fav+i]; }).length; s.fin=nn===3;
+    if(s.fin&&set){ stageDone(5); award('s6done',70); h+='<div class="okb" style="margin-top:12px"><b>Дебати виграно! Ти аргументувала свій вибір 🎉</b></div>'+nextRow('Далі: Wrap-Up →'); } else h+='<div class="muted">Для завершення: познач критерії + відповіси на 3 заперечення.</div>'; }
+  $('#view').innerHTML=h+'</div>'; drawStages(); bindNext();
+  bindA('data-ct',function(v){ s.tab=parseInt(v,10); save(); r6(); }); $('#uk6').onclick=function(){ s.uk=!s.uk; r6(); };
+  bindA('data-dl',function(v){ var d=DEST.filter(function(x){return x.id===v;})[0]; say(d.n+'. '+d.f[cat[0]][0]); });
+  bindA('data-wt',function(v){ var a=v.split('|'); s.w[a[0]]=parseInt(a[1],10); save(); r6(); });
+  bindA('data-fv',function(v){ s.fav=v; save(); r6(); }); bindChips('data-db',DEB);
+  var fd2=DEST.filter(function(d){return d.id===s.fav;})[0]; bindA('data-cs',function(v){ say(fd2.ch[parseInt(v,10)]); });
+  var cc=document.querySelectorAll('[data-cc]'); for(var i=0;i<cc.length;i++) cc[i].onchange=function(){ var k=this.getAttribute('data-cc'); s.ctr[k]=this.checked; if(this.checked) award('c_'+k,15); save(); r6(); };
+}
+
+/* ================= STAGE 7 ================= */
+var WORDS7=['crowded','budget','local','view','tram','staff','noisy','location','market','souvenirs','bargain','cash','discount','recommend','expensive','worth it','deposit','reservation','spontaneous','itinerary','I\u2019d rather','definitely','however','in conclusion'];
+var REF=['What was the hardest moment today, and what helped you?','Which new phrase will you use on your next trip?','What are you proud of today?'];
+var BADGES=[['🗣️','Quick Talker','Заверши Stage 1',function(){return S.done[0];}],['📚','Word Wizard','Заверши Stage 2',function(){return S.done[1];}],['💰','Budget Boss','Заверши Stage 3',function(){return S.done[2];}],['🤐','Taboo Master','Вгадай 5 слів у Taboo',function(){return Object.keys(S.s4.tab).length>=5;}],['🎭','Actor','Заверши 2 сцени',function(){return S.done[4];}],['⚡','Plot Twist Survivor','Використай Unexpected problem',function(){ return Object.keys(S.s5.ts).length>0; }],['⚖️','Debater','Заверши Stage 6',function(){return S.done[5];}],['🏆','Marathoner','Дійди до Stage 7',function(){return S.stage===6||S.done[6];}]];
+function sum7(){ var w=WORDS7.filter(function(x,i){ return S.s7.words[i]; }); var b=BADGES.filter(function(x){ return x[3](); }).map(function(x){ return x[1]; }); return 'Ultimate Weekend Trip: підсумок уроку (120 хв, A2)\n\nXP: '+totalXp()+'\nВайб: '+vibeInfo()[1]+'\nЕтапи: '+STG.map(function(s,i){ return (S.done[i]?'✔ ':'○ ')+s[0]; }).join(' | ')+'\nБейджі: '+(b.length?b.join(', '):'—')+'\nКошик: '+(ITEMS.filter(function(i){return S.s3.cart[i.id];}).map(function(i){return i.en;}).join(', ')||'—')+' ('+m$(ct())+')\nОбраний напрямок: '+(S.s6.fav?DEST.filter(function(d){return d.id===S.s6.fav;})[0].n:'—')+'\nНові слова, які я використала: '+(w.length?w.join(', '):'—')+'\n\nРефлексія:\n'+REF.map(function(q,i){ return (i+1)+'. '+q+'\n   '+(S.s7.ref[i]||'—'); }).join('\n'); }
+function r7(){
+  var s=S.s7, nb=BADGES.filter(function(x){return x[3]();}).length, nw=Object.keys(s.words).filter(function(k){return s.words[k];}).length;
+  var h='<div class="card"><h2>🏁 Wrap-Up, Self-Reflection & Summary</h2><div class="kpi"><div><span class="n">'+totalXp()+'</span><small>XP</small></div><div><span class="n">'+S.done.filter(Boolean).length+'/7</span><small>етапів</small></div><div><span class="n">'+nb+'/8</span><small>бейджів</small></div></div>'+
+   '<h3>Бейджі</h3><div class="bdg">'+BADGES.map(function(b){ var on=b[3](); return '<div class="bd'+(on?' on':'')+'"><span class="e">'+b[0]+'</span><b>'+b[1]+'</b><br>'+b[2]+'</div>'; }).join('')+'</div>'+
+   '<h3>Нові слова, які я сьогодні використала</h3><div class="wds">'+WORDS7.map(function(w,i){ return '<label class="'+(s.words[i]?'on':'')+'"><input type="checkbox" data-w7="'+i+'"'+(s.words[i]?' checked':'')+'> '+esc(w)+'</label>'; }).join('')+'</div>'+
+   '<h3>Три запитання для рефлексії</h3><div class="muted">Скажи вголос 2–3 речення, а потім за бажанням запиши коротко.</div>'+REF.map(function(q,i){ return '<div class="just"><b>'+(i+1)+'. '+esc(q)+'</b> <button class="chip" data-rs="'+i+'">🔊</button><textarea class="ta" data-rf="'+i+'" aria-label="Нотатка '+(i+1)+'" placeholder="Нотатки (за бажанням)...">'+esc(s.ref[i]||'')+'</textarea></div>'; }).join('')+
+   '<div class="okb"><b>Ти молодець! 🌟</b><br>Сьогодні ти говорила англійською дуже багато. Це вже перемога. Кожна розмова робить тебе впевненішою.</div><h3>Підсумок для копіювання</h3><div class="sum">'+esc(sum7())+'</div><div class="row" style="margin-top:12px"><button class="btn main" id="cpy">📋 Копіювати підсумок</button><button class="btn" id="rst">Почати спочатку</button></div></div>';
+  if(S.done.slice(0,6).every(Boolean)){ stageDone(6); award('s7done',40); }
+  $('#view').innerHTML=h; drawStages();
+  var wc2=document.querySelectorAll('[data-w7]'); for(var i=0;i<wc2.length;i++) wc2[i].onchange=function(){ var k=this.getAttribute('data-w7'); s.words[k]=this.checked; if(this.checked) award('w7_'+k,2); save(); this.parentNode.classList.toggle('on',this.checked); };
+  bindA('data-rs',function(v){ say(REF[parseInt(v,10)]); });
+  var tf=document.querySelectorAll('[data-rf]'); for(var j=0;j<tf.length;j++) tf[j].oninput=function(){ var k=parseInt(this.getAttribute('data-rf'),10); s.ref[k]=this.value; if(this.value.length>10) award('ref'+k,10); save(); };
+  $('#cpy').onclick=function(){ copyText(sum7(),'Підсумок скопійовано ✓'); };
+  var arm=false; $('#rst').onclick=function(){ if(!arm){ arm=true; this.textContent='Натисни ще раз для підтвердження'; } else { try{ window.localStorage.removeItem(KEY); }catch(e){} location.reload(); } };
+}
+
+drawClock(); render();
+</script>
+</body>
+</html>
